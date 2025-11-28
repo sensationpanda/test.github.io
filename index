@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>测试用 HTML 页面</title>
+  <style>
+    :root{
+      --bg: #f7f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --brand: #3b82f6;
+      --brand-2:#2563eb;
+      --ok:#16a34a;
+      --warn:#f59e0b;
+      --err:#ef4444;
+      --border:#e5e7eb;
+      --shadow: 0 8px 24px rgba(0,0,0,.08);
+      --radius: 14px;
+    }
+    [data-theme="dark"]{
+      --bg: #0b1220;
+      --card: #111827;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --brand: #60a5fa;
+      --brand-2:#3b82f6;
+      --ok:#22c55e;
+      --warn:#fbbf24;
+      --err:#f87171;
+      --border:#1f2937;
+      --shadow: 0 8px 24px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font: 14px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Noto Sans", "PingFang SC","Hiragino Sans GB","Microsoft YaHei UI","Microsoft YaHei",sans-serif;
+      color:var(--text);
+      background:linear-gradient(180deg, var(--bg), color-mix(in oklab, var(--bg) 80%, #fff 20%));
+    }
+    a{color:var(--brand);text-decoration:none}
+    a:hover{text-decoration:underline}
+    header{
+      position:sticky; top:0; z-index:10;
+      backdrop-filter:saturate(1.2) blur(8px);
+      background: color-mix(in oklab, var(--bg) 65%, var(--card) 35%);
+      border-bottom:1px solid var(--border);
+    }
+    .wrap{max-width:1100px;margin:0 auto;padding:16px}
+    .nav{
+      display:flex;align-items:center;gap:12px;justify-content:space-between;
+    }
+    .brand{font-weight:700;letter-spacing:.3px}
+    .btn{
+      appearance:none;border:1px solid var(--border);background:var(--card);
+      color:var(--text); padding:8px 12px;border-radius:10px;cursor:pointer;
+      box-shadow:var(--shadow); transition:.2s transform, .2s box-shadow, .2s background;
+    }
+    .btn.primary{border-color:transparent;background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff}
+    .btn.ghost{background:transparent; box-shadow:none}
+    .btn:active{transform:translateY(1px)}
+    .grid{
+      display:grid; gap:16px; align-items:start;
+      grid-template-columns: 1.2fr .8fr;
+    }
+    @media (max-width: 900px){ .grid{grid-template-columns: 1fr} }
+
+    .card{
+      background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+      box-shadow:var(--shadow); padding:16px;
+    }
+    h1,h2,h3{margin:0 0 12px}
+    h1{font-size:28px}
+    .muted{color:var(--muted)}
+    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    @media (max-width: 700px){ .kpis{grid-template-columns:repeat(2,1fr)} }
+    .kpi{padding:14px;border-radius:12px;border:1px dashed var(--border);background:color-mix(in oklab,var(--card) 85%, var(--bg) 15%)}
+    .kpi .val{font-size:22px;font-weight:700}
+
+    /* 表格 */
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left}
+    thead th{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+    tbody tr:hover{background:color-mix(in oklab,var(--card) 70%, var(--bg) 30%)}
+    .badge{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid var(--border)}
+    .ok{color:var(--ok);border-color:color-mix(in oklab,var(--ok) 50%, var(--border) 50%)}
+    .warn{color:var(--warn)}
+    .err{color:var(--err)}
+
+    /* 表单 */
+    .field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+    .row{display:flex;gap:12px;flex-wrap:wrap}
+    input[type="text"],input[type="email"],select,textarea{
+      width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text)
+    }
+    .help{font-size:12px;color:var(--muted)}
+    .required::after{content:" *"; color:var(--err)}
+
+    /* toast */
+    .toast{
+      position:fixed; right:16px; bottom:16px; display:none; max-width:320px;
+      padding:12px 14px; background:var(--card); border:1px solid var(--border);
+      border-radius:12px; box-shadow:var(--shadow)
+    }
+
+    /* 对话框 (dialog) polyfill-ish 样式 */
+    dialog{
+      border:none; border-radius:16px; padding:0; background:var(--card); color:var(--text);
+      box-shadow: var(--shadow); width:min(560px, 92vw)
+    }
+    dialog::backdrop{background:rgba(0,0,0,.3)}
+
+    /* 小组件 */
+    .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .search{flex:1; min-width:180px}
+    .progress{height:10px;border-radius:999px;background:color-mix(in oklab, var(--bg) 70%, var(--card) 30%);overflow:hidden;border:1px solid var(--border)}
+    .bar{height:100%;width:42%;background:linear-gradient(90deg,var(--brand),var(--brand-2))}
+    .pill{font-size:12px;padding:2px 8px;border-radius:999px;background:color-mix(in oklab,var(--brand) 15%, #fff 85%);border:1px solid var(--border)}
+    .code{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size:12px; background:color-mix(in oklab,var(--card) 80%, var(--bg) 20%); padding:10px;border-radius:10px;border:1px solid var(--border)}
+    footer{padding:40px 0;color:var(--muted);text-align:center}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap nav" role="navigation" aria-label="主导航">
+      <div class="brand">🧪 测试页面</div>
+      <div class="toolbar">
+        <button id="themeBtn" class="btn" aria-pressed="false" aria-label="切换主题">切换浅/深色</button>
+        <button id="openDlg" class="btn">打开对话框</button>
+        <button id="notify" class="btn primary">显示通知</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" id="main" tabindex="-1">
+    <section class="card" aria-labelledby="s1-title">
+      <h1 id="s1-title">页面概览 <span class="pill">纯前端 · 无依赖</span></h1>
+      <p class="muted">包含表单、表格、搜索过滤、对话框、通知、语义标签、可访问性属性等常见测试点。</p>
+
+      <div class="kpis" role="list">
+        <div class="kpi" role="listitem" aria-label="完成率">
+          <div class="muted">完成率</div>
+          <div class="val" id="kpi-done">42%</div>
+          <div class="progress" aria-hidden="true"><div class="bar" id="bar"></div></div>
+        </div>
+        <div class="kpi" role="listitem">
+          <div class="muted">记录数</div>
+          <div class="val" id="kpi-rec">8</div>
+          <div class="help">可通过搜索过滤</div>
+        </div>
+        <div class="kpi" role="listitem">
+          <div class="muted">错误</div>
+          <div class="val err" id="kpi-err">0</div>
+          <div class="help">表单校验显示错误</div>
+        </div>
+        <div class="kpi" role="listitem">
+          <div class="muted">主题</div>
+          <div class="val" id="kpi-theme">Light</div>
+          <div class="help">支持 prefers-color-scheme</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid" style="margin-top:16px">
+      <!-- 左列：表格与搜索 -->
+      <section class="card" aria-labelledby="table-title">
+        <div class="toolbar" style="margin-bottom:12px">
+          <h2 id="table-title" style="flex:1">数据表</h2>
+          <input id="q" class="search" type="text" placeholder="搜索名称/状态…" aria-label="搜索表格" />
+          <button id="addRow" class="btn">添加一行</button>
+        </div>
+
+        <div class="code" aria-live="polite" aria-atomic="true" id="resultInfo">已加载 8 条</div>
+
+        <table aria-describedby="resultInfo">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">名称</th>
+              <th scope="col">状态</th>
+              <th scope="col">更新时间</th>
+            </tr>
+          </thead>
+          <tbody id="tbody">
+            <!-- 初始数据由 JS 注入 -->
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 右列：表单/列表/媒体 -->
+      <aside class="card" aria-labelledby="form-title">
+        <h2 id="form-title">示例表单</h2>
+        <form id="demoForm" novalidate>
+          <div class="field">
+            <label class="required" for="name">名称</label>
+            <input id="name" name="name" type="text" placeholder="如：Phoenix West" required />
+            <div class="help">必填，最少 2 个字符</div>
+          </div>
+          <div class="row">
+            <div class="field" style="flex:1">
+              <label class="required" for="email">邮箱</label>
+              <input id="email" name="email" type="email" placeholder="you@example.com" required />
+            </div>
+            <div class="field" style="flex:1">
+              <label for="status">状态</label>
+              <select id="status" name="status">
+                <option value="进行中">进行中</option>
+                <option value="已完成">已完成</option>
+                <option value="延迟">延迟</option>
+              </select>
+            </div>
+          </div>
+          <fieldset class="field" aria-describedby="optHelp">
+            <legend>可选项</legend>
+            <label><input type="checkbox" name="agree" /> 同意条款</label>
+            <label><input type="radio" name="prio" value="高" /> 高优先级</label>
+            <label><input type="radio" name="prio" value="低" /> 低优先级</label>
+            <div id="optHelp" class="help">未选择优先级也可提交</div>
+          </fieldset>
+          <div class="field">
+            <label for="desc">描述</label>
+            <textarea id="desc" name="desc" rows="3" placeholder="简单描述…"></textarea>
+          </div>
+          <div class="row">
+            <button class="btn primary" type="submit">提交</button>
+            <button class="btn ghost" type="reset">重置</button>
+          </div>
+          <p id="formMsg" class="help" role="status" aria-live="polite"></p>
+        </form>
+
+        <hr style="margin:16px 0;border:none;border-top:1px solid var(--border)">
+
+        <h3>其他组件</h3>
+        <details>
+          <summary>展开查看 SVG 图标与图片</summary>
+          <div class="row" style="align-items:center">
+            <svg width="48" height="48" viewBox="0 0 24 24" aria-label="勾选图标" role="img">
+              <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M7 12l3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <img alt="占位图" width="120" height="80"
+                 src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='160'><rect width='100%' height='100%' fill='%23e5e7eb'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='18' fill='%236b7280'>Placeholder</text></svg>">
+          </div>
+        </details>
+      </aside>
+    </div>
+
+    <!-- 语义化分区示例 -->
+    <section class="card" style="margin-top:16px">
+      <h2>语义与可访问性</h2>
+      <ul>
+        <li>语义标签：<code>&lt;header&gt;&lt;main&gt;&lt;section&gt;&lt;aside&gt;&lt;footer&gt;</code></li>
+        <li>表格使用 <code>scope</code>、表单具备 <code>label</code> 与 <code>aria-*</code></li>
+        <li>键盘体验：Tab 顺序、对话框 <kbd>Esc</kbd> 关闭</li>
+      </ul>
+      <p class="muted">提示：可在 DevTools 切换首选配色方案，或使用右上角按钮直接切换主题。</p>
+    </section>
+
+    <dialog id="dlg" aria-labelledby="dlg-title">
+      <form method="dialog" style="padding:16px">
+        <h3 id="dlg-title" style="margin-bottom:8px">示例对话框</h3>
+        <p class="muted">这里是任意内容。按 <kbd>Esc</kbd> 或点击关闭按钮可退出。</p>
+        <div class="row" style="margin-top:8px;justify-content:flex-end">
+          <button class="btn ghost">关闭</button>
+        </div>
+      </form>
+    </dialog>
+
+    <div id="toast" class="toast" role="status" aria-live="polite">这是一条通知。</div>
+  </main>
+
+  <footer>
+    <small>© 2025 Test HTML • 构建用于前端/可访问性/样式/交互的快速验证</small>
+  </footer>
+
+  <script>
+    // 数据模拟
+    const seed = [
+      { id:1, name:"Alpha",  status:"进行中", updated:"2025-10-02" },
+      { id:2, name:"Bravo",  status:"已完成", updated:"2025-09-14" },
+      { id:3, name:"Charlie",status:"延迟",   updated:"2025-11-03" },
+      { id:4, name:"Delta",  status:"进行中", updated:"2025-11-10" },
+      { id:5, name:"Echo",   status:"已完成", updated:"2025-08-30" },
+      { id:6, name:"Foxtrot",status:"进行中", updated:"2025-11-20" },
+      { id:7, name:"Golf",   status:"延迟",   updated:"2025-11-21" },
+      { id:8, name:"Hotel",  status:"进行中", updated:"2025-11-22" },
+    ];
+    let rows = [...seed];
+
+    const $ = (s,root=document)=>root.querySelector(s);
+    const $$ = (s,root=document)=>[...root.querySelectorAll(s)];
+
+    const tbody = $("#tbody");
+    const info = $("#resultInfo");
+
+    function render(data){
+      tbody.innerHTML = "";
+      data.forEach((r,i)=>{
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${r.id}</td>
+          <td>${r.name}</td>
+          <td><span class="badge ${r.status==="已完成"?"ok":r.status==="延迟"?"warn":""}">${r.status}</span></td>
+          <td>${r.updated}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+      info.textContent = `已加载 ${data.length} 条（总计 ${rows.length}）`;
+      $("#kpi-rec").textContent = data.length;
+    }
+    render(rows);
+
+    // 搜索过滤
+    $("#q").addEventListener("input", e=>{
+      const q = e.target.value.trim().toLowerCase();
+      const filtered = rows.filter(r => (r.name.toLowerCase().includes(q) || r.status.includes(q)));
+      render(filtered);
+    });
+
+    // 添加一行
+    $("#addRow").addEventListener("click", ()=>{
+      const id = rows.length ? Math.max(...rows.map(r=>r.id)) + 1 : 1;
+      const names = ["India","Juliet","Kilo","Lima","Mike","November","Oscar"];
+      const pick = names[Math.floor(Math.random()*names.length)];
+      const statuses = ["进行中","已完成","延迟"];
+      const status = statuses[Math.floor(Math.random()*statuses.length)];
+      const today = new Date().toISOString().slice(0,10);
+      rows.push({ id, name: pick, status, updated: today });
+      render(rows);
+      toast(`已添加行 #${id} (${pick})`);
+      updateProgress();
+    });
+
+    // 表单校验
+    const f = $("#demoForm");
+    f.addEventListener("submit", e=>{
+      e.preventDefault();
+      const name = f.name.value.trim();
+      const email = f.email.value.trim();
+      let ok = true, msg = [];
+      if(name.length < 2){ ok = false; msg.push("名称至少 2 个字符"); }
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ ok = false; msg.push("邮箱格式不正确"); }
+      const m = $("#formMsg");
+      if(ok){
+        m.textContent = "✅ 提交成功（仅前端模拟）";
+        m.style.color = "var(--ok)";
+        toast("表单提交成功！");
+      }else{
+        m.textContent = "❌ " + msg.join("；");
+        m.style.color = "var(--err)";
+        $("#kpi-err").textContent = "1";
+      }
+    });
+
+    // 对话框
+    const dlg = $("#dlg");
+    $("#openDlg").addEventListener("click", ()=> dlg.showModal());
+
+    // 通知
+    const toastEl = $("#toast");
+    function toast(text){
+      toastEl.textContent = text;
+      toastEl.style.display = "block";
+      clearTimeout(toastEl._t);
+      toastEl._t = setTimeout(()=> toastEl.style.display = "none", 2400);
+    }
+    $("#notify").addEventListener("click", ()=> toast("这是一条测试通知。"));
+
+    // 主题切换
+    const themeBtn = $("#themeBtn");
+    function setTheme(next){
+      document.documentElement.setAttribute("data-theme", next);
+      themeBtn.setAttribute("aria-pressed", next==="dark" ? "true" : "false");
+      $("#kpi-theme").textContent = next==="dark" ? "Dark" : "Light";
+    }
+    themeBtn.addEventListener("click", ()=>{
+      const cur = document.documentElement.getAttribute("data-theme") || "light";
+      setTheme(cur === "light" ? "dark" : "light");
+    });
+    // 根据用户偏好初始化
+    if(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches){
+      setTheme("dark");
+    }
+
+    // 进度条/完成率演示
+    function updateProgress(){
+      const completed = rows.filter(r=>r.status==="已完成").length;
+      const pct = Math.round(completed / rows.length * 100) || 0;
+      $("#bar").style.width = pct + "%";
+      $("#kpi-done").textContent = pct + "%";
+    }
+    updateProgress();
+
+    // 键盘可用性：通知区可聚焦；打开对话框后聚焦关闭按钮
+    dlg.addEventListener("close", ()=> $("#main").focus());
+  </script>
+</body>
+</html>
